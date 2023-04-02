@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="UserControls.Views.ImagesSourcePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"      
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:Interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF">
+    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}" BorderThickness="2">
+        <Grid x:Name="Root">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Grid
+                x:Name="TitleBar"
+                VerticalAlignment="Center"
+                Background="{DynamicResource MahApps.Brushes.Accent}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Text="{Binding Title.Value}"
+                    Padding="5"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource MahApps.Brushes.IdealForeground}" />
+                <Button
+                    Grid.Column="1"
+                    Command="{Binding ClearCommand }"
+                    Style="{StaticResource MahApps.Styles.Button.Square.Accent}">
+                    <iconPacks:PackIconEvaIcons Kind="Close" />
+                </Button>
+            </Grid>
+            <Grid Grid.Row="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl
+                        AllowDrop="True"
+                        Margin="10"
+                        ItemsSource="{Binding DisplayingImageFilePaths.Value}"
+                        Background="{DynamicResource MahApps.Brushes.Window.Background}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Drop">
+                                <Interactivity:EventToReactiveCommand Command="{Binding DropCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="PreviewDragOver">
+                                <Interactivity:EventToReactiveCommand Command="{Binding PreviewDragOverCommand}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="PreviewDragLeave">
+                                <Interactivity:EventToReactiveCommand Command="{Binding PreviewDragLeaveCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Padding="5"
+                                    Text="{Binding}"
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTip="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                <TextBlock
+                    Visibility="{Binding ImagesEmptyTextVisibility.Value}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsHitTestVisible="False"
+                    Text="フォルダをドロップしてください。" />
+
+                <Border
+                    Visibility="{Binding OverlayVisibility.Value}"
+                    Background="{DynamicResource MahApps.Brushes.Accent}"
+                    IsHitTestVisible="False"
+                    Opacity="0.5" />
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

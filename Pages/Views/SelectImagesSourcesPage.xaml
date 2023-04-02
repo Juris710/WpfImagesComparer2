@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="Pages.Views.SelectImagesSourcesPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"       
+             xmlns:usercontrols="clr-namespace:UserControls.Views;assembly=UserControls"
+             xmlns:viewmodels="clr-namespace:Pages.ViewModels" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:properties="clr-namespace:Core.Properties;assembly=Core"
+             d:DataContext="{d:DesignInstance Type=viewmodels:SelectImagesSourcesPageViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding ImagesSources.Sources}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding Path=Columns, Source={x:Static properties:Settings.Default}}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <usercontrols:ImagesSourcePicker Margin="10" ImageFilePaths="{Binding Path=ImageFilePaths.Value, Mode=TwoWay}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel
+            Grid.Row="1"
+            Margin="10"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <mah:NumericUpDown
+                Margin="5"
+                Maximum="20"
+                Minimum="1"
+                Value="{Binding Path=ImagesSources.Count.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button
+                Margin="5"
+                Command="{Binding NavigateToMainCommand}"
+                Content="決定"
+                Style="{StaticResource MahApps.Styles.Button.Square.Accent}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

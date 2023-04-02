@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="Pages.Views.MainPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:prism="http://prismlibrary.com/" 
+             xmlns:viewmodels="clr-namespace:Pages.ViewModels" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             d:DataContext="{d:DesignInstance Type=viewmodels:MainPageViewModel}"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:converters="clr-namespace:Pages"
+             xmlns:properties="clr-namespace:Core.Properties;assembly=Core"
+             xmlns:usercontrols="clr-namespace:UserControls.Views;assembly=UserControls"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             x:Name="Root">
+    <UserControl.Resources>
+        <converters:ExtractKeyFromHotKeyConverter x:Key="ExtractKeyFromHotKeyConverter" />
+        <converters:ExtractModifierKeysFromHotKeyConverter x:Key="ExtractModifierKeysFromHotKeyConverter" />
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding
+            Key="{Binding PreviousImageHotKey, Converter={StaticResource ExtractKeyFromHotKeyConverter}, Source={x:Static properties:Settings.Default}}"
+            Command="{Binding PreviousImageCommand}"
+            Modifiers="{Binding PreviousImageHotKey, Converter={StaticResource ExtractModifierKeysFromHotKeyConverter}, Source={x:Static properties:Settings.Default}}" />
+        <KeyBinding
+            Key="{Binding NextImageHotKey, Converter={StaticResource ExtractKeyFromHotKeyConverter}, Source={x:Static properties:Settings.Default}}"
+            Command="{Binding NextImageCommand}"
+            Modifiers="{Binding NextImageHotKey, Converter={StaticResource ExtractModifierKeysFromHotKeyConverter}, Source={x:Static properties:Settings.Default}}" />
+        <KeyBinding
+            Key="{Binding ResetTransformHotKey, Converter={StaticResource ExtractKeyFromHotKeyConverter}, Source={x:Static properties:Settings.Default}}"
+            Command="{Binding ResetTransfromCommand}"
+            Modifiers="{Binding ResetTransformHotKey, Converter={StaticResource ExtractModifierKeysFromHotKeyConverter}, Source={x:Static properties:Settings.Default}}" />
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding DisplayingImageSources.Value}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding Path=Columns, Source={x:Static properties:Settings.Default}}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <usercontrols:ImageViewer Source="{Binding}" Transform="{Binding ElementName=Root, Path=DataContext.Transform.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ToolBarTray IsLocked="True" Orientation="Horizontal">
+            <ToolBar>
+                <Button Command="{Binding NavigateToSelectImagesSourceCommand}" ToolTip="画像選択画面に戻る">
+                    <iconPacks:PackIconEvaIcons Kind="ArrowBack" />
+                </Button>
+            </ToolBar>
+            <ToolBar>
+                <Button Command="{Binding ResetTransfromCommand}" ToolTip="画像の位置とサイズをデフォルトに戻す">
+                    <iconPacks:PackIconEvaIcons Kind="Refresh" />
+                </Button>
+            </ToolBar>
+            <ToolBar>
+                <Button Command="{Binding FirstImageCommand}" ToolTip="最初の画像">
+                    <iconPacks:PackIconForkAwesome Kind="AngleDoubleLeft" />
+                </Button>
+                <Button Command="{Binding PreviousImageCommand}" ToolTip="前の画像">
+                    <iconPacks:PackIconForkAwesome Kind="AngleLeft" />
+                </Button>
+                <mah:NumericUpDown 
+                    Margin="5"
+                    Minimum="1"
+                    Maximum="{Binding MaxImagesCount.Value}"
+                    Value="{Binding Path=ImageIndex.Value, Mode=TwoWay}"
+                    HideUpDownButtons="True"
+                    />
+                <TextBlock
+                    Margin="10,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding MaxImagesCount.Value, StringFormat=/ \{0\}}"/>
+                <Button Command="{Binding NextImageCommand}" ToolTip="次の画像">
+                    <iconPacks:PackIconForkAwesome Kind="AngleRight" />
+                </Button>
+                <Button Command="{Binding LastImageCommand}" ToolTip="最後の画像">
+                    <iconPacks:PackIconForkAwesome Kind="AngleDoubleRight" />
+                </Button>
+            </ToolBar>
+            <ToolBar>
+                <Button Command="{Binding CopyImageFileNameCommand}" ToolTip="ファイル名をコピーする">
+                    <TextBlock VerticalAlignment="Center" Text="{Binding ImageFileName.Value}" />
+                </Button>
+            </ToolBar>
+            <ToolBar>
+                <Button Command="{Binding SearchImageByFileNameCommand}" ToolTip="画像をファイル名で検索する">
+                    <iconPacks:PackIconForkAwesome Kind="Search" />
+                </Button>
+            </ToolBar>
+            <ToolBar>
+                <Button Command="{Binding SaveImageCommand}" ToolTip="結合した画像を保存する">
+                    <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+    </Grid>
+</UserControl>

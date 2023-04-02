@@ -1,0 +1,1 @@
+# WpfImagesComparer2
